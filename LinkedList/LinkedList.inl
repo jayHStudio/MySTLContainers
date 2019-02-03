@@ -212,7 +212,7 @@ namespace JayH
 		// 항목이 하나도 없다면 지우지 않는다.
 		if (mSize != 0)
 		{
-			Erase(begin(), end());
+			erase(begin(), end());
 		}
 
 		// 더미노드는 무조건 생성되므로 항목이 없더라도 더미노드들의 메모리를 반드시 해제해줘야 한다.
@@ -261,7 +261,7 @@ namespace JayH
 
 		// 기존에 있던 모든 항목들을 다 지운다.
 		// 더미노드는 이미 만들어져있으므로 다시 만들 필요가 없다.
-		Erase(begin(), end());
+		erase(begin(), end());
 		mSize = 0;
 
 		// 모든 항목을 복사한다.
@@ -274,7 +274,7 @@ namespace JayH
 	{
 		// 기존에 있던 모든 항목들을 다 지운다.
 		// 더미노드는 이미 만들어져있으므로 다시 만들 필요가 없다.
-		Erase(begin(), end());
+		erase(begin(), end());
 
 		// 얕은복사를 하여 이동한다.
 		pHead = rhs.pHead;
@@ -344,7 +344,7 @@ namespace JayH
 
 
 	template<typename T>
-	typename List<T>::iterator List<T>::Erase(iterator position)
+	typename List<T>::iterator List<T>::erase(iterator position)
 	{
 		iterator newIt(this, position.pCurrentNode);
 
@@ -363,11 +363,11 @@ namespace JayH
 
 
 	template<typename T>
-	typename List<T>::iterator List<T>::Erase(iterator first, iterator last)
+	typename List<T>::iterator List<T>::erase(iterator first, iterator last)
 	{
 		for (auto& it = first; it != last;)
 		{
-			it = Erase(it);
+			it = erase(it);
 		}
 
 		return first;
@@ -375,18 +375,18 @@ namespace JayH
 
 
 	template<typename T>
-	size_t List<T>::Size() const
+	size_t List<T>::size() const
 	{
 		return mSize;
 	}
 
 
 	template<typename T>
-	void List<T>::PushBack(const T & inData)
+	void List<T>::push_back(const T& data)
 	{
 		// 새로운 노드를 생성한다.
 		Node<T>* newNode = new Node<T>;
-		newNode->mData = inData;
+		newNode->mData = data;
 
 		// 새로운 노드를 잇는다.
 		pTail->pPrevNode->pNextNode = newNode;
@@ -401,7 +401,7 @@ namespace JayH
 
 
 	template<typename T>
-	typename List<T>::iterator List<T>::Insert(iterator position, const value_type& val)
+	typename List<T>::iterator List<T>::insert(iterator position, const value_type& val)
 	{
 		Node<T>* newNode = new Node<T>();
 		newNode->mData = val;
@@ -419,38 +419,38 @@ namespace JayH
 
 
 	template <typename T>
-	void List<T>::Insert(iterator position, size_t n, const value_type& value)
+	void List<T>::insert(iterator position, size_t n, const value_type& value)
 	{
 		for (size_t i = 0; i < n; i++)
 		{
-			Insert(position, value);
+			insert(position, value);
 		}
 	}
 
 
 	template <typename T>
-	typename List<T>::reference List<T>::Front()
+	typename List<T>::reference List<T>::front()
 	{
 		return pHead->pNextNode->mData;
 	}
 
 
 	template <typename T>
-	typename List<T>::const_reference List<T>::Front() const
+	typename List<T>::const_reference List<T>::front() const
 	{
 		return pHead->pNextNode->mData;
 	}
 
 
 	template <typename T>
-	typename List<T>::reference List<T>::Back()
+	typename List<T>::reference List<T>::back()
 	{
 		return pTail->pPrevNode->mData;
 	}
 
 
 	template <typename T>
-	typename List<T>::const_reference List<T>::Back() const
+	typename List<T>::const_reference List<T>::back() const
 	{
 		return pTail->pPrevNode->mData;
 	}
@@ -479,7 +479,7 @@ namespace JayH
 	{
 		for (auto it = src.begin(); it != src.end(); ++it)
 		{
-			PushBack(*it);
+			push_back(*it);
 		}
 	}
 

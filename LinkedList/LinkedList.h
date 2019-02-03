@@ -82,7 +82,7 @@ namespace JayH
 
 	public:
 		using value_type = T;
-		using reference = T & ;
+		using reference = T&;
 		using const_reference = const T&;
 		using iterator = ListIterator<List<T>>;
 		using const_iterator = ConstListIterator<List<T>>;
@@ -91,6 +91,30 @@ namespace JayH
 		friend const_iterator;
 
 		virtual ~List();
+
+		// TODO: initializer_list 생성자
+		// TODO: 반복자 범위를 인자로 받는 생성자
+		// TODO: initliazer_list를 우항으로 받는 대입연산자
+		// TODO: Empty()메서드
+		// TODO: Assign()메서드
+		// TODO: Emplace_Front() 메서드
+		// TODO: Push_Front() 메서드
+		// TODO: Pop_Front() 메서드
+		// TODO: Emplace_Back() 
+		// TODO: Push_Back()
+		// TODO: Pop_Back()
+		// TODO: Emplace
+		// TODO: Swap()
+		// TODO: Resize()
+		// TODO: Clear()
+
+		// TODO: Splice()
+		// TODO: Remove()
+		// TODO: Remove_if()
+		// TODO: Unique()
+		// TODO: Merge()
+		// TODO: Sort()
+		// TODO: Reverse()
 
 		List();
 		List(const List<T>& src);
@@ -106,18 +130,18 @@ namespace JayH
 		const_iterator end() const;
 		const_iterator cend() const;
 
-		void PushBack(const T& inData);
-		iterator Insert(iterator position, const value_type& value);
-		void Insert(iterator position, size_t n, const value_type& value);
-		iterator Erase(iterator position);
-		iterator Erase(iterator first, iterator last);
+		void push_back(const T& inData);
+		iterator insert(iterator position, const value_type& value);
+		void insert(iterator position, size_t n, const value_type& value);
+		iterator erase(iterator position);
+		iterator erase(iterator first, iterator last);
 
-		reference Front();
-		const_reference Front() const;
-		reference Back();
-		const_reference Back() const;
+		reference front();
+		const_reference front() const;
+		reference back();
+		const_reference back() const;
 
-		size_t Size() const;
+		size_t size() const;
 
 	private:
 		void CreateDmyNodesNConcatenate();

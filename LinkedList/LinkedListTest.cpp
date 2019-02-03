@@ -42,10 +42,10 @@ int main(void)
 	cout << setfill('-');
 	cout << setw(setwNum) << " [myList»ý¼º] " << endl;
 	cout << setw(setwNum) << " [PushBack 5, 10, 13, 11] " << endl;
-	myList1.PushBack(5);
-	myList1.PushBack(10);
-	myList1.PushBack(13);
-	myList1.PushBack(11);
+	myList1.push_back(5);
+	myList1.push_back(10);
+	myList1.push_back(13);
+	myList1.push_back(11);
 
 	cout << endl;
 
