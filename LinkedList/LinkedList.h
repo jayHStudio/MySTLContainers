@@ -1,4 +1,5 @@
 // JayH 2019.02.03 ~
+// STL 컨테이너 list를 직접 구현해본다.
 
 #pragma once
 
@@ -10,24 +11,29 @@ namespace JayH
 	template <typename T>
 	struct Node
 	{
+
+	public:
 		Node();
 
 		Node<T>* pNextNode;
 		Node<T>* pPrevNode;
 
 		T mData;
+
 	};
 
 	/* ---------------------------------------------------------------------------------------- */
-	
+
 	template <typename _List>
 	class ConstListIterator
 	{
-		friend _List;
 
 	public:
 		using value_type = typename _List::value_type;
 
+		friend _List;
+
+		ConstListIterator();
 		ConstListIterator(const _List* list, Node<value_type>* currentNode);
 
 		const value_type& operator*() const;
@@ -76,7 +82,7 @@ namespace JayH
 
 	public:
 		using value_type = T;
-		using reference = T&;
+		using reference = T & ;
 		using const_reference = const T&;
 		using iterator = ListIterator<List<T>>;
 		using const_iterator = ConstListIterator<List<T>>;
@@ -84,47 +90,48 @@ namespace JayH
 		friend iterator;
 		friend const_iterator;
 
-		List(); virtual ~List();
+		virtual ~List();
 
+		List();
 		List(const List<T>& src);
 		List(List<T>&& src) noexcept;
 		List<T>& operator=(const List<T>& rhs);
 		List<T>& operator=(List<T>&& rhs) noexcept;
 
 		iterator begin();
-		iterator end();
 		const_iterator begin() const;
+		const_iterator cbegin() const;
+
+		iterator end();
 		const_iterator end() const;
-		const_iterator cbegin();
-		const_iterator cend();
-
-		iterator Erase(iterator position);
-		iterator Erase(iterator first, iterator last);
-
-		size_t Size() const;
+		const_iterator cend() const;
 
 		void PushBack(const T& inData);
 		iterator Insert(iterator position, const value_type& value);
 		void Insert(iterator position, size_t n, const value_type& value);
+		iterator Erase(iterator position);
+		iterator Erase(iterator first, iterator last);
 
 		reference Front();
 		const_reference Front() const;
 		reference Back();
 		const_reference Back() const;
 
+		size_t Size() const;
+
 	private:
-		void CreateDummyNode();
+		void CreateDmyNodesNConcatenate();
 		void CopyFrom(const List<T>& src);
 
 		Node<T>* pHead;
 		Node<T>* pTail;
-		
-		size_t mNumOfData;
+
+		size_t mSize;
 
 	};
 
 	/* ---------------------------------------------------------------------------------------- */
-	
+
 }
 
 #include "LinkedList.inl"

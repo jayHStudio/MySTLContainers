@@ -6,6 +6,7 @@
 #include <crtdbg.h>
 #include <list>
 #include <iostream>
+#include <iomanip>
 
 #include "LinkedList.h"
 
@@ -26,23 +27,57 @@ void PrintListElements(const List<T>& list)
 	{
 		cout << *it << " ";
 	}
-	
+
 	cout << endl;
-}
-
-void Test()
-{
-
 }
 
 int main(void)
 {
-	// 디버그 모드일때 메모리릭이 발생하는지 로그를 찍는다.
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	constexpr size_t setwNum = 90;
 
+	List<int> myList1;
 
-	Test();
+	cout << setiosflags(ios::left);
+	cout << setfill('-');
+	cout << setw(setwNum) << " [myList생성] " << endl;
+	cout << setw(setwNum) << " [PushBack 5, 10, 13, 11] " << endl;
+	myList1.PushBack(5);
+	myList1.PushBack(10);
+	myList1.PushBack(13);
+	myList1.PushBack(11);
 
-	
-	system("pause");
+	cout << endl;
+
+	/* ---------------------------------------------------------------------------------------- */
+
+	cout << setw(setwNum) << " [반복자를 통한 for문 테스트] " << endl;
+	cout << "   myList1 : ";
+	for (List<int>::const_iterator it = myList1.cbegin(); it != myList1.cend(); ++it)
+	{
+		cout << *it << " ";
+	}
+	cout << "\n\n";
+
+	/* ---------------------------------------------------------------------------------------- */
+
+	cout << setw(setwNum) << " [STL전역 템플릿 메소드 begin() end() 테스트] " << endl;
+	cout << "   myList1 : ";
+	for (auto it = begin(myList1); it != end(myList1); ++it)
+	{
+		cout << *it << " ";
+	}
+	cout << "\n\n";
+
+	/* ---------------------------------------------------------------------------------------- */
+
+	cout << setw(setwNum) << " [구간 지정 반복문 테스트] " << endl;
+	cout << "   myList1 : ";
+	for (auto& it : myList1)
+	{
+		cout << it << " ";
+	}
+	cout << "\n\n";
+
+	system("PAUSE");
 }

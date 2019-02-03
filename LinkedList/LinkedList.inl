@@ -1,3 +1,4 @@
+#include "LinkedList.h"
 
 namespace JayH
 {
@@ -16,6 +17,16 @@ namespace JayH
 #pragma endregion
 	/* ---------------------------------------------------------------------------------------- */
 #pragma region ConstListIteratorClassImpl
+
+	// 디폴트 생성자를 만드는 이유는
+	// List<T>::const_iterator iterator; 와 같이 초기화 없이 선언 할 수 있게 하는게 목적이다.
+	template<typename _List>
+	ConstListIterator<_List>::ConstListIterator()
+		: pList(nullptr)
+		, pCurrentNode(nullptr)
+	{
+	}
+
 
 	template <typename _List>
 	ConstListIterator<_List>::ConstListIterator(const _List* list, Node<value_type>* currentNode)
@@ -196,30 +207,32 @@ namespace JayH
 #pragma region ListClassImpl
 
 	template <typename T>
-	List<T>::List()
-		: mNumOfData(0)
-	{
-		CreateDummyNode();
-	}
-
-
-	template <typename T>
 	List<T>::~List()
 	{
-		if (mNumOfData != 0)
+		// 항목이 하나도 없다면 지우지 않는다.
+		if (mSize != 0)
 		{
 			Erase(begin(), end());
 		}
 
+		// 더미노드는 무조건 생성되므로 항목이 없더라도 더미노드들의 메모리를 반드시 해제해줘야 한다.
 		delete pHead;
 		delete pTail;
 	}
 
 
 	template <typename T>
+	List<T>::List()
+		: mSize(0)
+	{
+		CreateDmyNodesNConcatenate();
+	}
+
+
+	template <typename T>
 	List<T>::List(const List<T>& src)
 	{
-		CreateDummyNode();
+		CreateDmyNodesNConcatenate();
 
 		CopyFrom(src);
 	}
@@ -230,11 +243,11 @@ namespace JayH
 	{
 		pHead = src.pHead;
 		pTail = src.pTail;
-		mNumOfData = src.mNumOfData;
+		mSize = src.mSize;
 
 		// 머리, 꼬리가 가르키는 더미노드를 다시 만들어서 가르키게한다.
-		src.CreateDummyNode();
-		src.mNumOfData = 0;
+		src.CreateDmyNodesNConcatenate();
+		src.mSize = 0;
 	}
 
 
@@ -249,7 +262,7 @@ namespace JayH
 		// 기존에 있던 모든 항목들을 다 지운다.
 		// 더미노드는 이미 만들어져있으므로 다시 만들 필요가 없다.
 		Erase(begin(), end());
-		mNumOfData = 0;
+		mSize = 0;
 
 		// 모든 항목을 복사한다.
 		CopyFrom(rhs);
@@ -266,17 +279,24 @@ namespace JayH
 		// 얕은복사를 하여 이동한다.
 		pHead = rhs.pHead;
 		pTail = rhs.pTail;
-		mNumOfData = rhs.mNumOfData;
+		mSize = rhs.mSize;
 
 		// 머리, 꼬리가 가르키는 더미노드를 다시 만들어서 가르키게한다.
-		rhs.CreateDummyNode();
-		rhs.mNumOfData = 0;
+		rhs.CreateDmyNodesNConcatenate();
+		rhs.mSize = 0;
 	}
 
 
 	template<typename T>
 	typename List<T>::iterator List<T>::begin()
 	{
+		// 항목이 비어있다면 end()가 가르키는 반복자를 리턴해야한다.
+		if (mSize == 0)
+		{
+			return end();
+		}
+
+		// begin()의 위치는 Head가 가르키는 더미노드의 다음항목이다.
 		return ListIterator<List<T>>(this, pHead->pNextNode);
 	}
 
@@ -284,36 +304,42 @@ namespace JayH
 	template<typename T>
 	typename List<T>::iterator List<T>::end()
 	{
+		// end()의 위치는 마지막 항목을 한칸 지나친 항목, 즉, 꼬리가 가르키는 더미노드가 end()의 위치가 된다.
 		return ListIterator<List<T>>(this, pTail);
-
 	}
 
 
 	template<typename T>
 	typename List<T>::const_iterator List<T>::begin() const
 	{
-		return ConstListIterator<List<T>>(this, pHead->pNextNode);
+		// non-const begin() 메서드를 호출하기 위해 const캐스팅을 쓴다.
+		// 리턴된 iterator 형 타입은 const_iterator로 암시적 업캐스팅된다.
+		return const_cast<List<T>*>(this)->begin();
 	}
 
 
 	template<typename T>
 	typename List<T>::const_iterator List<T>::end() const
 	{
-		return ConstListIterator<List<T>>(this, pTail);
+		// non-const end() 메서드를 호출하기 위해 const캐스팅을 쓴다.
+		// 리턴된 iterator 형 타입은 const_iterator로 암시적 업캐스팅된다.
+		return const_cast<List<T>*>(this)->end();
 	}
 
 
 	template<typename T>
-	typename List<T>::const_iterator List<T>::cbegin()
+	typename List<T>::const_iterator List<T>::cbegin() const
 	{
-		return ConstListIterator<List<T>>(this, pHead->pNextNode);
+		// 리턴된 iterator 형 타입은 const_iterator로 암시적 업캐스팅된다.
+		return begin();
 	}
 
 
 	template<typename T>
-	typename List<T>::const_iterator List<T>::cend()
+	typename List<T>::const_iterator List<T>::cend() const
 	{
-		return ConstListIterator<List<T>>(this, pTail);
+		// 리턴된 iterator 형 타입은 const_iterator로 암시적 업캐스팅된다.
+		return end();
 	}
 
 
@@ -330,7 +356,7 @@ namespace JayH
 		newIt.pCurrentNode = position.pCurrentNode->pNextNode;
 
 		delete deleteNode;
-		mNumOfData--;
+		mSize--;
 
 		return newIt;
 	}
@@ -351,7 +377,7 @@ namespace JayH
 	template<typename T>
 	size_t List<T>::Size() const
 	{
-		return mNumOfData;
+		return mSize;
 	}
 
 
@@ -370,7 +396,7 @@ namespace JayH
 		pTail->pPrevNode = newNode;
 
 		// 항목 수를 하나 늘린다.
-		mNumOfData++;
+		mSize++;
 	}
 
 
@@ -386,7 +412,7 @@ namespace JayH
 		newNode->pNextNode = position.pCurrentNode;
 		position.pCurrentNode->pPrevNode = newNode;
 
-		mNumOfData++;
+		mSize++;
 
 		return position;
 	}
@@ -431,7 +457,7 @@ namespace JayH
 
 
 	template <typename T>
-	void List<T>::CreateDummyNode()
+	void List<T>::CreateDmyNodesNConcatenate()
 	{
 		// 머리가 가르킬 더미노드를 생성한다.
 		pHead = new Node<T>();
