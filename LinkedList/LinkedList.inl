@@ -229,6 +229,16 @@ namespace JayH
 	}
 
 
+	template<typename T>
+	template<typename InputIterator>
+	List<T>::List(InputIterator first, InputIterator last)
+	{
+		CreateDmyNodesNConcatenate();
+
+		insert(begin(), first, last);
+	}
+
+	
 	template <typename T>
 	List<T>::List(const List<T>& src)
 	{
@@ -238,14 +248,25 @@ namespace JayH
 	}
 
 
+	template<typename T>
+	List<T>::List(std::initializer_list<value_type> il)
+	{
+		CreateDmyNodesNConcatenate();
+
+		insert(begin(), std::cbegin(il), std::cend(il));
+	}
+
+
 	template <typename T>
 	List<T>::List(List<T>&& src) noexcept
 	{
+		// 변수의 값을 이전한다.
 		pHead = src.pHead;
 		pTail = src.pTail;
 		mSize = src.mSize;
 
 		// 머리, 꼬리가 가르키는 더미노드를 다시 만들어서 가르키게한다.
+		// 여기서 src.pHead와 src.pTail은 NullNode를 가르키게된다.
 		src.CreateDmyNodesNConcatenate();
 		src.mSize = 0;
 	}
@@ -262,16 +283,22 @@ namespace JayH
 		// 기존에 있던 모든 항목들을 다 지운다.
 		// 더미노드는 이미 만들어져있으므로 다시 만들 필요가 없다.
 		erase(begin(), end());
-		mSize = 0;
 
 		// 모든 항목을 복사한다.
 		CopyFrom(rhs);
+
+		return *this;
 	}
 
 
 	template <typename T>
 	List<T>& List<T>::operator=(List<T>&& rhs) noexcept
 	{
+		if (this == &rhs)
+		{
+			return *this;
+		}
+
 		// 기존에 있던 모든 항목들을 다 지운다.
 		// 더미노드는 이미 만들어져있으므로 다시 만들 필요가 없다.
 		erase(begin(), end());
@@ -284,9 +311,23 @@ namespace JayH
 		// 머리, 꼬리가 가르키는 더미노드를 다시 만들어서 가르키게한다.
 		rhs.CreateDmyNodesNConcatenate();
 		rhs.mSize = 0;
+
+		return *this;
 	}
 
 
+	template<typename T>
+	List<T>& List<T>::operator=(std::initializer_list<value_type> il)
+	{
+		// 기존에 있던 모든 항목을 다 지운다.
+		erase(begin(), end());
+
+		insert(begin(), std::cbegin(il), std::cend(il));
+
+		return *this;
+	}
+
+	
 	template<typename T>
 	typename List<T>::iterator List<T>::begin()
 	{
@@ -375,6 +416,13 @@ namespace JayH
 
 
 	template<typename T>
+	void List<T>::clear()
+	{
+		erase(begin(), end());
+	}
+
+
+	template<typename T>
 	size_t List<T>::size() const
 	{
 		return mSize;
@@ -403,9 +451,11 @@ namespace JayH
 	template<typename T>
 	typename List<T>::iterator List<T>::insert(iterator position, const value_type& val)
 	{
+		// 새로운 노드를 생성한다.
 		Node<T>* newNode = new Node<T>();
 		newNode->mData = val;
 
+		// position이 가르키는 노드에 새로운 노드를 잇는다.
 		position.pCurrentNode->pPrevNode->pNextNode = newNode;
 		newNode->pPrevNode = position.pCurrentNode->pPrevNode;
 
@@ -424,6 +474,17 @@ namespace JayH
 		for (size_t i = 0; i < n; i++)
 		{
 			insert(position, value);
+		}
+	}
+
+
+	template<typename T>
+	template<typename InputIterator>
+	void List<T>::insert(iterator position, InputIterator first, InputIterator last)
+	{
+		for (auto it = first; it != last; ++it)
+		{
+			insert(position, *it);
 		}
 	}
 

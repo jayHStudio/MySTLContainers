@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <initializer_list>
+
 namespace JayH
 {
 
@@ -92,35 +94,15 @@ namespace JayH
 
 		virtual ~List();
 
-		// TODO: initializer_list 생성자
-		// TODO: 반복자 범위를 인자로 받는 생성자
-		// TODO: initliazer_list를 우항으로 받는 대입연산자
-		// TODO: Empty()메서드
-		// TODO: Assign()메서드
-		// TODO: Emplace_Front() 메서드
-		// TODO: Push_Front() 메서드
-		// TODO: Pop_Front() 메서드
-		// TODO: Emplace_Back() 
-		// TODO: Push_Back()
-		// TODO: Pop_Back()
-		// TODO: Emplace
-		// TODO: Swap()
-		// TODO: Resize()
-		// TODO: Clear()
-
-		// TODO: Splice()
-		// TODO: Remove()
-		// TODO: Remove_if()
-		// TODO: Unique()
-		// TODO: Merge()
-		// TODO: Sort()
-		// TODO: Reverse()
-
 		List();
 		List(const List<T>& src);
+		List(std::initializer_list<value_type> il);
+		template <typename InputIterator> List(InputIterator first, InputIterator last);
 		List(List<T>&& src) noexcept;
+
 		List<T>& operator=(const List<T>& rhs);
 		List<T>& operator=(List<T>&& rhs) noexcept;
+		List<T>& operator=(std::initializer_list<value_type> il);
 
 		iterator begin();
 		const_iterator begin() const;
@@ -133,6 +115,7 @@ namespace JayH
 		void push_back(const T& inData);
 		iterator insert(iterator position, const value_type& value);
 		void insert(iterator position, size_t n, const value_type& value);
+		template <typename InputIterator> void insert(iterator position, InputIterator first, InputIterator last);
 		iterator erase(iterator position);
 		iterator erase(iterator first, iterator last);
 
@@ -141,6 +124,7 @@ namespace JayH
 		reference back();
 		const_reference back() const;
 
+		void clear();
 		size_t size() const;
 
 	private:
